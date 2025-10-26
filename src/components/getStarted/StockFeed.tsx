@@ -2,6 +2,9 @@ import { useState } from "react";
 import { IoSparklesOutline } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import PaymentGateway from "../paymentGateway/PaymentGateway";
+import IsInvestedStock from "./IsNotInvestedStock";
+import IsNotInvestedStock from "./IsNotInvestedStock";
+import InvestedStocks from "./InvestedStocks";
 
 const StockFeed = () => {
   // Store the index of the currently opened stock
@@ -10,11 +13,11 @@ const StockFeed = () => {
   const [selectedStock, setSelectedStock] = useState<string>("");
 
   const stockList = [
-    "IBM stock",
-    "Apple stock",
-    "Infosys stock",
-    "Google stock",
-    "Amazon stock",
+    { stock: "IBM stock", invested: true },
+    { stock: "Apple stock", invested: false },
+    { stock: "Infosys stock", invested: false },
+    { stock: "Google stock", invested: true },
+    { stock: "Amazon stock", invested: true },
   ];
 
   // Toggle the payment integration for a specific stock
@@ -52,9 +55,9 @@ const StockFeed = () => {
         >
           <div className="flex justify-between items-center">
             <div>
-              <h5 className="text-lg">{item}</h5>
+              <h5 className="text-lg">{item.stock}</h5>
               <p className="text-[#b8b8b8] text-sm">
-                Description about the {item}
+                Description about the {item.stock}
               </p>
             </div>
 
@@ -72,27 +75,37 @@ const StockFeed = () => {
             <div className="w-full flex flex-col gap-2 mt-2">
               <div className="ycenter flex-col">
                 <span className="w-full border-t border-dashed"></span>
-                <h2 className="text-2xl mt-2 font-semibold">{item}</h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  Connect your payment method to invest in this stock.
-                </p>
-                <button
-                  onClick={() => {
-                    setpaymentGateway(!paymentGateway), setSelectedStock(item);
-                    console.log(item);
-                    
-                  }}
-                  className="mt-2 text-white cursor-pointer px-4 py-1.5 border border-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-200 ease-in-out"
-                >
-                  Continue payment setup
-                </button>
+                <h2 className="text-2xl mt-2 font-semibold">{item.stock}</h2>
+
+                {!item.invested ? (
+                  <>
+                    <IsNotInvestedStock
+                      setpaymentGateway={setpaymentGateway}
+                      setSelectedStock={setSelectedStock}
+                      item={item}
+                    />
+                  </>
+                ) : (
+                  <div className="p-3 w-full text-center">
+                    <h3 className="text-lg text-green-300 font-semibold mb-2">
+                      Invested Stocks
+                    </h3>
+                    {/* Future stock list here */}
+                    <p className="text-sm text-gray-500">
+                      This is your invested stock details.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
         </div>
       ))}
       {paymentGateway && (
-        <PaymentGateway setpaymentGateway={setpaymentGateway} selectedStock={selectedStock}/>
+        <PaymentGateway
+          setpaymentGateway={setpaymentGateway}
+          selectedStock={selectedStock}
+        />
       )}
     </div>
   );

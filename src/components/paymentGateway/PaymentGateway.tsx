@@ -15,7 +15,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     console.log("Selected Stock in PaymentGateway:", selectedStock);
   });
   return (
-    <div className="w-full h-screen z-50 top-0 right-0  absolute allcenter">
+    <div className="w-full h-screen z-50 top-0 right-0 absolute allcenter">
       <div className="w-[80%] h-[80%]  allcenter rounded-lg bg-[#ffffff13]  backdrop-blur-xs ">
         <button
           onClick={() => setpaymentGateway(false)}
