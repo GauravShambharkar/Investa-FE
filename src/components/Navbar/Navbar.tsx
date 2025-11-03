@@ -14,37 +14,37 @@ const Navbar = () => {
           {/* right side navigation elements */}
 
           <div className="flex gap-2 border max-[550px]:hidden">
-            <div className="border p-1.5 ycenter rounded-full ">
+            <div className="border p-1 ycenter rounded-full ">
               <NavLink
                 to="/getStarted"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-blue-500 transition-all ease-in-out duration-250 px-6 py-1.5 rounded-full ycenter"
-                    : "text-[white] transition-all ease-in-out duration-250 px-6 py-1.5 ycenter rounded-full hover:bg-[#dfdfdf52] "
+                    ? "text-blue-500 transition-all ease-in-out duration-250 px-4 py-1 rounded-full ycenter"
+                    : "text-[white] transition-all ease-in-out duration-250 px-4 py-1 ycenter rounded-full hover:bg-[#dfdfdf52] "
                 }
               >
                 getStarted
               </NavLink>
             </div>
-            <div className="border p-1.5 ycenter rounded-full ">
+            <div className="border p-1 ycenter rounded-full ">
               <NavLink
                 to="/signin"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-blue-500 transition-all ease-in-out duration-250 px-6 py-1.5 rounded-full ycenter"
-                    : "text-[white] transition-all ease-in-out duration-250 px-6 py-1.5 ycenter rounded-full hover:bg-[#dfdfdf52] "
+                    ? "text-blue-500 transition-all ease-in-out duration-250 px-4 py-1 rounded-full ycenter"
+                    : "text-[white] transition-all ease-in-out duration-250 px-4 py-1 ycenter rounded-full hover:bg-[#dfdfdf52] "
                 }
               >
                 Login
               </NavLink>
             </div>
-            <div className="border p-1.5 ycenter rounded-full ">
+            <div className="border p-1 ycenter rounded-full ">
               <NavLink
                 to="/signup"
                 className={({ isActive }) =>
                   isActive
-                    ? "text-blue-500 transition-all ease-in-out duration-250 px-6 py-1.5 rounded-full ycenter"
-                    : "text-[white] transition-all ease-in-out duration-250 px-6 py-1.5 ycenter rounded-full hover:bg-[#dfdfdf52] "
+                    ? "text-blue-500 transition-all ease-in-out duration-250 px-4 py-1 rounded-full ycenter"
+                    : "text-[white] transition-all ease-in-out duration-250 px-4 py-1 ycenter rounded-full hover:bg-[#dfdfdf52] "
                 }
               >
                 Register

@@ -19,7 +19,7 @@ const IsNotInvestedStock: React.FC<IsNotInvestedStockProps> = ({
 
       <button
         onClick={() => {
-          setpaymentGateway(false);
+          setpaymentGateway(true);
           setSelectedStock(item.stock);
           console.log(item);
         }}
