@@ -23,7 +23,7 @@ const IsNotInvestedStock: React.FC<IsNotInvestedStockProps> = ({
           setSelectedStock(item.stock);
           console.log(item);
         }}
-        className="mt-2 text-white cursor-pointer px-4 py-1.5 border border-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-200 ease-in-out"
+        className="mt-2 text-white cursor-pointer px-4 py-1.5 border border-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-300 inset-shadow-blue-500 inset-shadow-sm ease-in-out"
       >
         Continue payment setup
       </button>

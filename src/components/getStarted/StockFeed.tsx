@@ -36,10 +36,10 @@ const StockFeed = () => {
   return (
     <div className="p-4 flex flex-col gap-3">
       {/* Header */}
-      <div className="w-full border p-2 flex justify-between items-center transition-all duration-200 ease-in-out">
+      <div className="w-full border rounded-lg p-2 flex justify-between items-center transition-all duration-200 ease-in-out">
         <div className="flex gap-1 items-center">
-          <h3 className="text-lg font-semibold">Stock Feed</h3>
-          <IoSparklesOutline />
+          <h3 className="text-lg font-semibold text-blue-300">Stock Feed</h3>
+          <IoSparklesOutline className="text-yellow-300" />
         </div>
 
         <div className="flex gap-2 items-center">
@@ -57,13 +57,74 @@ const StockFeed = () => {
 
       {/* Stock List */}
       {filterQeury ? (
-        stockList
-          .filter((item) =>
-            item.stock.toLowerCase().includes(filterQeury.toLowerCase())
-          )
-          .map((item: any) => (
-            <div className="text-white border">{item.stock}</div>
-          ))
+        stockList.filter((item) =>
+          item.stock.toLowerCase().includes(filterQeury.toLowerCase())
+        ).length > 0 ? (
+          stockList
+            .filter((item) =>
+              item.stock.toLowerCase().includes(filterQeury.toLowerCase())
+            )
+            .map((item: any, index: any) => (
+              <div
+                key={index}
+                className="border p-3 transition-all duration-300 ease-in-out rounded-md hover:bg-[#5454541a] flex flex-col gap-2 cursor-pointer"
+                onClick={() => toggleDetail(index)}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h5 className="text-lg">{item.stock}</h5>
+                    <p className="text-[#b8b8b8] text-sm">
+                      Description about the {item.stock}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`cursor-pointer size-6 border rounded-full allcenter transition-all duration-200 ease-in-out ${
+                      openIndex === index ? "rotate-180 bg-[#b8b8b84f]" : ""
+                    }`}
+                  >
+                    <IoIosArrowDown />
+                  </span>
+                </div>
+
+                {/* Payment Integration - only visible for selected stock */}
+                {openIndex === index && (
+                  <div className="w-full flex flex-col gap-2 mt-2">
+                    <div className="ycenter flex-col">
+                      <span className="w-full border-t border-dashed"></span>
+                      <h2 className="text-2xl mt-2 font-semibold">
+                        {item.stock}
+                      </h2>
+
+                      {!item.invested ? (
+                        <>
+                          <IsNotInvestedStock
+                            setpaymentGateway={setpaymentGateway}
+                            setSelectedStock={setSelectedStock}
+                            item={item}
+                          />
+                        </>
+                      ) : (
+                        <div className="p-3 w-full text-center">
+                          <h3 className="text-lg text-green-300 font-semibold mb-2">
+                            Invested Stocks
+                          </h3>
+                          {/* Future stock list here */}
+                          <p className="text-sm text-gray-500">
+                            This is your invested stock details.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+        ) : (
+          <div className="allcenter w-full h-80  border p-4 rounded-md text-gray-400">
+            No matching stocks found
+          </div>
+        )
       ) : stockList.length > 0 ? (
         stockList.map((item, index) => (
           <div
@@ -90,7 +151,7 @@ const StockFeed = () => {
 
             {/* Payment Integration - only visible for selected stock */}
             {openIndex === index && (
-              <div className="w-full flex flex-col gap-2 mt-2">
+              <div className="w-full flex flex-col gap-2 mt-2 py-4" >
                 <div className="ycenter flex-col">
                   <span className="w-full border-t border-dashed"></span>
                   <h2 className="text-2xl mt-2 font-semibold">{item.stock}</h2>
@@ -104,7 +165,7 @@ const StockFeed = () => {
                       />
                     </>
                   ) : (
-                    <div className="p-3 w-full text-center">
+                    <div className="p-3 w-full text-center ">
                       <h3 className="text-lg text-green-300 font-semibold mb-2">
                         Invested Stocks
                       </h3>
