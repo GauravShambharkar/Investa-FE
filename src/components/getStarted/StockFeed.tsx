@@ -2,10 +2,8 @@ import { useState } from "react";
 import { IoSparklesOutline } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import PaymentGateway from "../paymentGateway/PaymentGateway";
-import IsInvestedStock from "./IsNotInvestedStock";
 import IsNotInvestedStock from "./IsNotInvestedStock";
-import InvestedStocks from "./InvestedStocks";
-
+import axios from "axios";
 const StockFeed = () => {
   // Store the index of the currently opened stock
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -33,12 +31,22 @@ const StockFeed = () => {
     return console.log(query);
   }
 
+  async function analyseStock() {
+    try {
+      const res = await axios
+        .post(`${import.meta.env.VITE_STOCK_ANALYSIS_ENDPOINT}`)
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (error) {}
+  }
+
   return (
     <div className="p-4 flex flex-col gap-3">
       {/* Header */}
-      <div className="w-full border rounded-lg p-2 flex justify-between items-center transition-all duration-200 ease-in-out">
-        <div className="flex gap-1 items-center">
-          <h3 className="text-lg font-semibold text-blue-300">Stock Feed</h3>
+      <div className="w-full rounded-lg p-2 flex justify-between items-center transition-all duration-200 ease-in-out">
+        <div className="flex gap-2 ">
+          <h3 className="text-lg text-blue-300">Stock Feed</h3>
           <IoSparklesOutline className="text-yellow-300" />
         </div>
 
@@ -151,7 +159,7 @@ const StockFeed = () => {
 
             {/* Payment Integration - only visible for selected stock */}
             {openIndex === index && (
-              <div className="w-full flex flex-col gap-2 mt-2 py-4" >
+              <div className="w-full flex flex-col gap-2 mt-2 py-4">
                 <div className="ycenter flex-col">
                   <span className="w-full border-t border-dashed"></span>
                   <h2 className="text-2xl mt-2 font-semibold">{item.stock}</h2>

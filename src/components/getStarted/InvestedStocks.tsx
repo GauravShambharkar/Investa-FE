@@ -1,6 +1,6 @@
 const InvestedStocks = () => {
   return (
-    <div className="p-3">
+    <div className="px-7 py-8">
       <h3 className="text-lg font-semibold mb-2">Invested Stocks</h3>
       {/* Future stock list here */}
       <p className="text-sm text-gray-500">

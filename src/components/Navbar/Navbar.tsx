@@ -5,9 +5,9 @@ const Navbar = () => {
   return (
     <>
       <div className="w-[70%] h-25 mx-auto  flex flex-col justify-center max-[850px]:w-[90%] ">
-        <div className="flex items-center justify-between border px-5 py-2 rounded-full ">
-          <NavLink to="/" className="flex gap-1">
-            <img src="logoipsum-249.png" alt="InvestaLogo" className="size-5" />
+        <div className="flex items-center justify-between border px-5 py-3 rounded-full ">
+          <NavLink to="/" className="flex gap-1 items-center">
+            <img src="investa.svg" alt="InvestaLogo" className="size-7" />
             Investa
           </NavLink>
 
