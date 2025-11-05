@@ -4,6 +4,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import PaymentGateway from "../paymentGateway/PaymentGateway";
 import axios from "axios";
 import MarketAnalysis from "./MarketAnalysis";
+import Skeleton from "react-loading-skeleton";
+
 const StockFeed = () => {
   // Store the index of the currently opened stock
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -75,7 +77,7 @@ const StockFeed = () => {
             .map((item: any, index: any) => (
               <div
                 key={index}
-                className="border p-3 transition-all duration-300 ease-in-out rounded-md hover:bg-[#5454541a] flex flex-col gap-2 cursor-pointer"
+                className="border px-3 py-6  transition-all duration-300 ease-in-out rounded-md hover:bg-[#5454541a] flex flex-col gap-2 cursor-pointer"
                 onClick={() => toggleDetail(index)}
               >
                 <div className="flex justify-between items-center">
@@ -124,7 +126,7 @@ const StockFeed = () => {
         stockList.map((item, index) => (
           <div
             key={index}
-            className="border p-3 transition-all duration-300 ease-in-out rounded-md hover:bg-[#5454541a] flex flex-col gap-2 cursor-pointer"
+            className="border px-3 py-6 transition-all duration-300 ease-in-out rounded-md hover:bg-[#5454541a] flex flex-col gap-2 cursor-pointer"
             onClick={() => toggleDetail(index)}
           >
             <div className="flex justify-between items-center">
