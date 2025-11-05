@@ -1,12 +1,12 @@
 import React from "react";
 
-type IsNotInvestedStockProps = {
+type MarketAnalysisProps = {
   setpaymentGateway: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedStock: React.Dispatch<React.SetStateAction<string>>;
   item: { stock: string; invested: boolean };
 };
 
-const IsNotInvestedStock: React.FC<IsNotInvestedStockProps> = ({
+const MarketAnalysis: React.FC<MarketAnalysisProps> = ({
   setpaymentGateway,
   setSelectedStock,
   item,
@@ -14,7 +14,7 @@ const IsNotInvestedStock: React.FC<IsNotInvestedStockProps> = ({
   return (
     <>
       <p className="text-sm text-gray-500 mt-1">
-        Connect your payment method to invest in this stock.
+        Ask AI what market speaking about {item.stock}.
       </p>
 
       <button
@@ -25,10 +25,10 @@ const IsNotInvestedStock: React.FC<IsNotInvestedStockProps> = ({
         }}
         className="mt-2 text-white cursor-pointer px-4 py-1.5 border border-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-300 inset-shadow-blue-500 inset-shadow-sm ease-in-out"
       >
-        Continue payment setup
+        Continue Market Analysis
       </button>
     </>
   );
 };
 
-export default IsNotInvestedStock;
+export default MarketAnalysis;

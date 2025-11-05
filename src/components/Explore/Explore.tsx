@@ -1,8 +1,8 @@
-import InvestedStocks from "./InvestedStocks";
-import Profile from "./Profile";
+import InvestedStocks from "./InvestedStocks/InvestedStocks";
+import Profile from "./Profile/Profile";
 import StockFeed from "./StockFeed";
 
-const GetStarted = () => {
+const Explore = () => {
   return (
     <div className="allcenter w-[90%] mx-auto  max-h-screen tracking-tighter ">
       <div className="grid grid-cols-[1fr_3fr_1fr] w-full h-[90vh] gap-3 overflow-hidden max-[950px]:grid-cols-[1fr_3fr]   max-[850px]:grid-cols-1">
@@ -25,4 +25,4 @@ const GetStarted = () => {
   );
 };
 
-export default GetStarted;
+export default Explore;

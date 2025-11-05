@@ -6,7 +6,7 @@ const Register = () => {
   }, []);
 
   return (
-    <div className="allcenter border w-[70%] h-screen mx-auto text-7xl">
+    <div className="allcenter rounded-2xl border w-[70%] h-screen mx-auto text-7xl">
       Register
     </div>
   );

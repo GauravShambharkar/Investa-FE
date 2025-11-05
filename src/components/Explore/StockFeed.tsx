@@ -2,8 +2,8 @@ import { useState } from "react";
 import { IoSparklesOutline } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import PaymentGateway from "../paymentGateway/PaymentGateway";
-import IsNotInvestedStock from "./IsNotInvestedStock";
 import axios from "axios";
+import MarketAnalysis from "./MarketAnalysis";
 const StockFeed = () => {
   // Store the index of the currently opened stock
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -103,26 +103,13 @@ const StockFeed = () => {
                       <h2 className="text-2xl mt-2 font-semibold">
                         {item.stock}
                       </h2>
-
-                      {!item.invested ? (
-                        <>
-                          <IsNotInvestedStock
-                            setpaymentGateway={setpaymentGateway}
-                            setSelectedStock={setSelectedStock}
-                            item={item}
-                          />
-                        </>
-                      ) : (
-                        <div className="p-3 w-full text-center">
-                          <h3 className="text-lg text-green-300 font-semibold mb-2">
-                            Invested Stocks
-                          </h3>
-                          {/* Future stock list here */}
-                          <p className="text-sm text-gray-500">
-                            This is your invested stock details.
-                          </p>
-                        </div>
-                      )}
+                      <>
+                        <MarketAnalysis
+                          setpaymentGateway={setpaymentGateway}
+                          setSelectedStock={setSelectedStock}
+                          item={item}
+                        />
+                      </>
                     </div>
                   </div>
                 )}
@@ -164,25 +151,13 @@ const StockFeed = () => {
                   <span className="w-full border-t border-dashed"></span>
                   <h2 className="text-2xl mt-2 font-semibold">{item.stock}</h2>
 
-                  {!item.invested ? (
-                    <>
-                      <IsNotInvestedStock
-                        setpaymentGateway={setpaymentGateway}
-                        setSelectedStock={setSelectedStock}
-                        item={item}
-                      />
-                    </>
-                  ) : (
-                    <div className="p-3 w-full text-center ">
-                      <h3 className="text-lg text-green-300 font-semibold mb-2">
-                        Invested Stocks
-                      </h3>
-                      {/* Future stock list here */}
-                      <p className="text-sm text-gray-500">
-                        This is your invested stock details.
-                      </p>
-                    </div>
-                  )}
+                  <>
+                    <MarketAnalysis
+                      setpaymentGateway={setpaymentGateway}
+                      setSelectedStock={setSelectedStock}
+                      item={item}
+                    />
+                  </>
                 </div>
               </div>
             )}
