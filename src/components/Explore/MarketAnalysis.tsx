@@ -27,6 +27,7 @@ const MarketAnalysis: React.FC<MarketAnalysisProps> = ({
       >
         Continue Market Analysis
       </button>
+      
     </>
   );
 };

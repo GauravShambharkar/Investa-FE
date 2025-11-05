@@ -18,6 +18,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     <div className="w-full h-screen top-0 right-0 absolute allcenter">
       <div className="w-[80%] h-[80%]  border-white allcenter rounded-lg bg-[#ffffff13]  backdrop-blur-xs ">
         <h1 className="text-5xl text-white">PaymentGateway</h1>
+        
 
         <button
           onClick={() => setpaymentGateway(false)}

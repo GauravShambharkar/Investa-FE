@@ -6,6 +6,7 @@ const InvestedStocks = () => {
       <p className="text-sm text-gray-500">
         Your invested stocks will appear here.
       </p>
+      
     </div>
   );
 };

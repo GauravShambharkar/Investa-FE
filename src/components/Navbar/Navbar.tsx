@@ -8,6 +8,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between border px-5 py-3 rounded-full ">
           <NavLink to="/" className="flex items-center">
             <img src="investa.svg" alt="InvestaLogo" className="size-10" />
+            
           </NavLink>
 
           {/* right side navigation elements */}

@@ -169,12 +169,12 @@ const StockFeed = () => {
         </div>
       )}
 
-      {paymentGateway && (
+      {/* {paymentGateway && (
         <PaymentGateway
           setpaymentGateway={setpaymentGateway}
           selectedStock={selectedStock}
         />
-      )}
+      )} */}
     </div>
   );
 };
