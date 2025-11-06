@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 type MarketAnalysisProps = {
-  setpaymentGateway: React.Dispatch<React.SetStateAction<boolean>>;
+  setRunAnalysis: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedStock: React.Dispatch<React.SetStateAction<string>>;
   item: { stock: string; invested: boolean };
 };
 
 const MarketAnalysis: React.FC<MarketAnalysisProps> = ({
-  setpaymentGateway,
+  setRunAnalysis,
   setSelectedStock,
   item,
 }) => {
+  useEffect(() => {}, []);
   return (
     <>
       <p className="text-sm text-gray-500 mt-1">
@@ -19,7 +20,7 @@ const MarketAnalysis: React.FC<MarketAnalysisProps> = ({
 
       <button
         onClick={() => {
-          setpaymentGateway(true);
+          setRunAnalysis(true);
           setSelectedStock(item.stock);
           console.log(item);
         }}
@@ -27,7 +28,6 @@ const MarketAnalysis: React.FC<MarketAnalysisProps> = ({
       >
         Continue Market Analysis
       </button>
-      
     </>
   );
 };

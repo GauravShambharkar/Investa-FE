@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoSparklesOutline } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
-import PaymentGateway from "../paymentGateway/PaymentGateway";
 import axios from "axios";
-import MarketAnalysis from "./MarketAnalysis";
 import Skeleton from "react-loading-skeleton";
+import FilterQuery from "./Filter/FilterQuery";
+import Stocks from "./Stocks/Stocks";
+import RunAnalysis from "../runAnalysis/RunAnalysis";
 
 const StockFeed = () => {
   // Store the index of the currently opened stock
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [paymentGateway, setpaymentGateway] = useState<boolean>(false);
+  const [runAnalysis, setRunAnalysis] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<string>("");
 
   const stockList = [
@@ -43,6 +44,8 @@ const StockFeed = () => {
     } catch (error) {}
   }
 
+  useEffect(() => {}, []);
+
   return (
     <div className="p-4 flex flex-col gap-3">
       {/* Header */}
@@ -75,47 +78,14 @@ const StockFeed = () => {
               item.stock.toLowerCase().includes(filterQeury.toLowerCase())
             )
             .map((item: any, index: any) => (
-              <div
-                key={index}
-                className="border px-3 py-6  transition-all duration-300 ease-in-out rounded-md hover:bg-[#5454541a] flex flex-col gap-2 cursor-pointer"
-                onClick={() => toggleDetail(index)}
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h5 className="text-lg">{item.stock}</h5>
-                    <p className="text-[#b8b8b8] text-sm">
-                      Description about the {item.stock}
-                    </p>
-                  </div>
-
-                  <span
-                    className={`cursor-pointer size-6 border rounded-full allcenter transition-all duration-200 ease-in-out ${
-                      openIndex === index ? "rotate-180 bg-[#b8b8b84f]" : ""
-                    }`}
-                  >
-                    <IoIosArrowDown />
-                  </span>
-                </div>
-
-                {/* Payment Integration - only visible for selected stock */}
-                {openIndex === index && (
-                  <div className="w-full flex flex-col gap-2 mt-2">
-                    <div className="ycenter flex-col">
-                      <span className="w-full border-t border-dashed"></span>
-                      <h2 className="text-2xl mt-2 font-semibold">
-                        {item.stock}
-                      </h2>
-                      <>
-                        <MarketAnalysis
-                          setpaymentGateway={setpaymentGateway}
-                          setSelectedStock={setSelectedStock}
-                          item={item}
-                        />
-                      </>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <FilterQuery
+                item={item}
+                index={index}
+                openIndex={openIndex}
+                toggleDetail={toggleDetail}
+                setRunAnalysis={setRunAnalysis}
+                setSelectedStock={setSelectedStock}
+              />
             ))
         ) : (
           <div className="allcenter w-full h-80  border p-4 rounded-md text-gray-400">
@@ -124,46 +94,14 @@ const StockFeed = () => {
         )
       ) : stockList.length > 0 ? (
         stockList.map((item, index) => (
-          <div
-            key={index}
-            className="border px-3 py-6 transition-all duration-300 ease-in-out rounded-md hover:bg-[#5454541a] flex flex-col gap-2 cursor-pointer"
-            onClick={() => toggleDetail(index)}
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <h5 className="text-lg">{item.stock}</h5>
-                <p className="text-[#b8b8b8] text-sm">
-                  Description about the {item.stock}
-                </p>
-              </div>
-
-              <span
-                className={`cursor-pointer size-6 border rounded-full allcenter transition-all duration-200 ease-in-out ${
-                  openIndex === index ? "rotate-180 bg-[#b8b8b84f]" : ""
-                }`}
-              >
-                <IoIosArrowDown />
-              </span>
-            </div>
-
-            {/* Payment Integration - only visible for selected stock */}
-            {openIndex === index && (
-              <div className="w-full flex flex-col gap-2 mt-2 py-4">
-                <div className="ycenter flex-col">
-                  <span className="w-full border-t border-dashed"></span>
-                  <h2 className="text-2xl mt-2 font-semibold">{item.stock}</h2>
-
-                  <>
-                    <MarketAnalysis
-                      setpaymentGateway={setpaymentGateway}
-                      setSelectedStock={setSelectedStock}
-                      item={item}
-                    />
-                  </>
-                </div>
-              </div>
-            )}
-          </div>
+          <Stocks
+            item={item}
+            index={index}
+            openIndex={openIndex}
+            toggleDetail={toggleDetail}
+            setRunAnalysis={setRunAnalysis}
+            setSelectedStock={setSelectedStock}
+          />
         ))
       ) : (
         <div className="allcenter w-full h-100 border">
@@ -171,12 +109,12 @@ const StockFeed = () => {
         </div>
       )}
 
-      {/* {paymentGateway && (
-        <PaymentGateway
-          setpaymentGateway={setpaymentGateway}
+      {runAnalysis && (
+        <RunAnalysis
+          setRunAnalysis={setRunAnalysis}
           selectedStock={selectedStock}
         />
-      )} */}
+      )}
     </div>
   );
 };

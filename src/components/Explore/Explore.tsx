@@ -21,7 +21,6 @@ const Explore = () => {
           <Profile />
         </div>
       </div>
-      
     </div>
   );
 };

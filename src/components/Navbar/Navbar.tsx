@@ -8,12 +8,23 @@ const Navbar = () => {
         <div className="flex items-center justify-between border px-5 py-3 rounded-full ">
           <NavLink to="/" className="flex items-center">
             <img src="investa.svg" alt="InvestaLogo" className="size-10" />
-            
           </NavLink>
 
           {/* right side navigation elements */}
 
           <div className="flex gap-2  max-[550px]:hidden">
+            <div className="border p-1 ycenter rounded-full ">
+              <NavLink
+                to="/plans"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-100 bg-blue-500 transition-all ease-in-out duration-250 px-4 py-1 rounded-full ycenter"
+                    : "text-[white] transition-all ease-in-out duration-250 px-4 py-1 ycenter rounded-full hover:bg-[#dfdfdf52] "
+                }
+              >
+                Plans
+              </NavLink>
+            </div>
             <div className="border p-1 ycenter rounded-full ">
               <NavLink
                 to="/explore"
