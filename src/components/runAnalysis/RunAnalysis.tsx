@@ -7,12 +7,13 @@ type RunAnalysisProps = {
   selectedStock: string;
 };
 
-const RunAnalysis: React.FC<RunAnalysisProps> = ({setRunAnalysis, selectedStock,}) => {
-  
+const RunAnalysis: React.FC<RunAnalysisProps> = ({
+  setRunAnalysis,
+  selectedStock,
+}) => {
   useEffect(() => {
     console.log("Selected Stock in RunAnalysis:", selectedStock);
-  });
-
+  }, []);
 
   return (
     <div className="w-full h-screen top-0 right-0 absolute allcenter">
