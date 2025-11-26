@@ -3,9 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 body {
   font-family: geist;
-
+  font-size: 12px;
 }
 
 .allcenter {
@@ -32,11 +33,11 @@ body {
   @apply flex flex-col
 }
 
-.border{
+.border {
   @apply border border-[#4f4f4f]
 }
 
-.txtdull{
+.txtdull {
   @apply text-gray-500
 }
 

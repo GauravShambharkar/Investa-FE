@@ -1,3 +1,4 @@
+import { SignIn } from "@clerk/clerk-react";
 import { useEffect } from "react";
 
 const Login = () => {
@@ -7,7 +8,7 @@ const Login = () => {
   return (
     <>
       <div className="allcenter rounded-2xl border w-[70%] h-screen mx-auto text-7xl ">
-        Login
+        <SignIn forceRedirectUrl="/explore" />
       </div>
     </>
   );

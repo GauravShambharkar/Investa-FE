@@ -13,6 +13,8 @@ const StockFeed = () => {
   const [runAnalysis, setRunAnalysis] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<string>("");
 
+  
+
   const stockList = [
     { stock: "IBM stock", invested: true },
     { stock: "Apple stock", invested: false },
