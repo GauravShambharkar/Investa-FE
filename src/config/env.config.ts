@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-// Read raw Vite environment variables
+// Read raw Vite environment variables cleanly from environment
 const rawEnv = {
   MODE: import.meta.env.MODE || "development",
   DEV: import.meta.env.DEV ?? true,
   PROD: import.meta.env.PROD ?? false,
-  VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-  VITE_NEWS_API: import.meta.env.VITE_NEWS_API,
+  VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "",
+  VITE_NEWS_API:
+    import.meta.env.VITE_NEWS_API || import.meta.env.VITE_NEWS_KEY || "",
   VITE_LOCAL_API_URL:
     import.meta.env.VITE_LOCAL_API_URL || "http://localhost:4000/investa/v1",
   VITE_PROD_API_URL:
@@ -22,10 +23,8 @@ const envSchema = z.object({
   MODE: z.string().default("development"),
   DEV: z.boolean().default(true),
   PROD: z.boolean().default(false),
-  VITE_CLERK_PUBLISHABLE_KEY: z
-    .string()
-    .min(1, "Clerk Publishable Key is required"),
-  VITE_NEWS_API: z.string().min(1, "News API Key is required"),
+  VITE_CLERK_PUBLISHABLE_KEY: z.string().default(""),
+  VITE_NEWS_API: z.string().default(""),
   VITE_LOCAL_API_URL: z.string().default("http://localhost:4000/investa/v1"),
   VITE_PROD_API_URL: z
     .string()
