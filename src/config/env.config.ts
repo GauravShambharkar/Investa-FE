@@ -6,8 +6,7 @@ const rawEnv = {
   DEV: import.meta.env.DEV ?? true,
   PROD: import.meta.env.PROD ?? false,
   VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "",
-  VITE_NEWS_API:
-    import.meta.env.VITE_NEWS_API || import.meta.env.VITE_NEWS_KEY || "",
+  VITE_NEWS_KEY: import.meta.env.VITE_NEWS_KEY,
   VITE_BACKEND_URL: import.meta.env.VITE_BACKEND_URL || "",
   VITE_LOCAL_API_URL: import.meta.env.VITE_LOCAL_API_URL || "",
   VITE_PROD_API_URL: import.meta.env.VITE_PROD_API_URL || "",
@@ -19,7 +18,7 @@ const envSchema = z.object({
   DEV: z.boolean().default(true),
   PROD: z.boolean().default(false),
   VITE_CLERK_PUBLISHABLE_KEY: z.string().optional(),
-  VITE_NEWS_API: z.string().optional(),
+  VITE_NEWS_KEY: z.string().optional(),
   VITE_BACKEND_URL: z.string().optional(),
   VITE_LOCAL_API_URL: z.string().optional(),
   VITE_PROD_API_URL: z.string().optional(),
@@ -46,7 +45,8 @@ export const API_BASE_URL =
 
 export const WEB_APP_URL = env.VITE_WEB_APP_URL || "";
 export const CLERK_PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY || "";
-export const NEWS_API_KEY = env.VITE_NEWS_API || "";
+export const VITE_NEWS_KEY = env.VITE_NEWS_KEY || "";
+export const NEWS_API_KEY = env.VITE_NEWS_KEY || "";
 
 // Helper Endpoints
 export const STOCK_ANALYSIS_ENDPOINT = `${API_BASE_URL}/analyse`;
