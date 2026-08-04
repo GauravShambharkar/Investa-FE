@@ -18,6 +18,7 @@ import {
   type NewsArticle,
   CATEGORY_TOPICS,
 } from "./newsData";
+import { API_BASE_URL, NEWS_API_KEY } from "../../config/env.config";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -30,24 +31,21 @@ const Home: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("popularity");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Fetch news dynamically via API endpoint (backend proxy first, direct NewsAPI fallback)
+  // Fetch news dynamically via API endpoint (smart local/production backend with direct NewsAPI fallback)
   const fetchNews = useCallback(async (query: string, sort: string) => {
     setLoading(true);
     setErrorMsg(null);
-
-    const apiKey =
-      import.meta.env.VITE_NEWS_API ||
-      import.meta.env.VITE_NEW_API ||
-      "4ff96fda4b7c418086d078bf65f6f077";
 
     const targetQuery =
       query.trim() ||
       CATEGORY_TOPICS.find((c) => c.id === activeCategory)?.query ||
       "stock market OR financial markets OR stocks OR economy";
 
-    // 1. Try Backend Proxy Endpoint First (avoids CORS & browser key limitations)
+    const fallbackProdUrl = "https://investa-be.onrender.com/investa/v1";
+
+    // 1. Try Configured Environment Backend Proxy Endpoint
     try {
-      const backendUrl = `http://localhost:4000/investa/v1/news?q=${encodeURIComponent(
+      const backendUrl = `${API_BASE_URL}/news?q=${encodeURIComponent(
         targetQuery
       )}&sortBy=${sort}&pageSize=30`;
 
@@ -63,15 +61,39 @@ const Home: React.FC = () => {
         setLoading(false);
         return;
       }
-    } catch (backendErr) {
-      console.warn("Backend news proxy unavailable, trying direct NewsAPI...");
+    } catch (primaryErr) {
+      console.warn("Primary backend endpoint info, trying fallback backend...");
     }
 
-    // 2. Direct NewsAPI call if backend endpoint is offline
+    // 2. Try Secondary Production Backend if Primary Localhost Server is offline
+    if (API_BASE_URL !== fallbackProdUrl) {
+      try {
+        const prodBackendUrl = `${fallbackProdUrl}/news?q=${encodeURIComponent(
+          targetQuery
+        )}&sortBy=${sort}&pageSize=30`;
+
+        const response = await axios.get(prodBackendUrl);
+
+        if (
+          response.data &&
+          response.data.ok &&
+          Array.isArray(response.data.articles) &&
+          response.data.articles.length > 0
+        ) {
+          setArticles(response.data.articles);
+          setLoading(false);
+          return;
+        }
+      } catch (prodErr) {
+        console.warn("Production backend proxy info, trying direct NewsAPI...");
+      }
+    }
+
+    // 3. Direct NewsAPI call if both backends are unreachable
     try {
       const directUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
         targetQuery
-      )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${apiKey}`;
+      )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${NEWS_API_KEY}`;
 
       const response = await axios.get(directUrl);
 
@@ -101,7 +123,7 @@ const Home: React.FC = () => {
       setArticles([]);
       setErrorMsg(
         err?.response?.data?.message ||
-          "Failed to load live news from API. Please verify your API key or backend server status."
+          "Failed to load live news from API. Please verify backend server or API key status."
       );
     } finally {
       setLoading(false);
@@ -261,7 +283,7 @@ const Home: React.FC = () => {
                   </h2>
                 </div>
 
-                {/* Top-Right Pagination (Matching bottom style, icon-only arrows) */}
+                {/* Top-Right Pagination */}
                 {totalPages > 1 && (
                   <div className="flex items-center gap-2">
                     <button

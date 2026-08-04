@@ -3,17 +3,17 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 import { Provider } from "react-redux";
 import { store } from "./components/Store/Store.tsx";
+import { CLERK_PUBLISHABLE_KEY } from "./config/env.config.ts";
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Add your Clerk Publishable Key to the .env file");
+if (!CLERK_PUBLISHABLE_KEY) {
+  throw new Error("Add your Clerk Publishable Key to the env configuration");
 }
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
       <BrowserRouter>
         <App />
       </BrowserRouter>

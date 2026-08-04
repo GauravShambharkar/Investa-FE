@@ -1,11 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const API_BASE_URL =
+  import.meta.env.VITE_BACKEND_URL ||
+  "https://investa-be.onrender.com/investa/v1";
+
 export const fetchStock = createAsyncThunk(
   "fetch/stocks",
-  async (stockName) => {
+  async (stockName: string) => {
     const res = await axios.get(
-      `http://localhost:4000/investa/v1/stock/${stockName}`
+      `${API_BASE_URL}/stock/${stockName}`
     );
     return res.data;
   }

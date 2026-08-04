@@ -18,10 +18,14 @@ const RunAnalysis: React.FC<RunAnalysisProps> = ({
     let isMounted = true;
     async function runAiAnalysis() {
       setLoading(true);
+      const apiBaseUrl =
+        import.meta.env.VITE_BACKEND_URL ||
+        "https://investa-be.onrender.com/investa/v1";
+
       try {
         const cleanSymbol = selectedStock.replace(/ stock/i, "").trim();
         const res = await axios.post(
-          `http://localhost:4000/investa/v1/analyse/${encodeURIComponent(cleanSymbol)}`
+          `${apiBaseUrl}/analyse/${encodeURIComponent(cleanSymbol)}`
         );
         if (isMounted && res.data && res.data.msg) {
           setAnalysisResult(res.data.msg);
