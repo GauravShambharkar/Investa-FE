@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 type MarketAnalysisProps = {
   setRunAnalysis: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,24 +12,24 @@ const MarketAnalysis: React.FC<MarketAnalysisProps> = ({
   setSelectedStock,
   item,
 }) => {
-  useEffect(() => {}, []);
   return (
-    <>
-      <p className="text-sm text-gray-500 mt-1">
-        Ask AI what market speaking about {item.stock}.
+    <div className="w-full space-y-3 pt-1">
+      <p className="text-[12px] text-gray-300 font-normal leading-relaxed">
+        Ask AI advisor what key indicators, financial checklist metrics, and market sentiment suggest about {item.stock}.
       </p>
 
       <button
         onClick={() => {
           setRunAnalysis(true);
           setSelectedStock(item.stock);
-          console.log(item);
         }}
-        className="mt-2 text-white cursor-pointer px-4 py-1.5 border border-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-all duration-300 inset-shadow-blue-500 inset-shadow-sm ease-in-out"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-[12px] font-medium transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
       >
-        Continue Market Analysis
+        <Sparkles className="size-3.5 text-yellow-300" />
+        <span>Continue Market Analysis</span>
+        <ArrowRight className="size-3.5" />
       </button>
-    </>
+    </div>
   );
 };
 
