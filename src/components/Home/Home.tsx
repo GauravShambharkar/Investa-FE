@@ -18,7 +18,7 @@ import {
   type NewsArticle,
   CATEGORY_TOPICS,
 } from "./newsData";
-import { API_BASE_URL, NEWS_API_KEY } from "../../config/env.config";
+import { API_BASE_URL, VITE_NEWS_KEY } from "../../config/env.config";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("popularity");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Fetch news dynamically via API endpoint using env variables
+  // Fetch news dynamically via Express Backend Proxy (avoids NewsAPI browser developer plan restriction)
   const fetchNews = useCallback(async (query: string, sort: string) => {
     setLoading(true);
     setErrorMsg(null);
@@ -41,36 +41,41 @@ const Home: React.FC = () => {
       CATEGORY_TOPICS.find((c) => c.id === activeCategory)?.query ||
       "stock market OR financial markets OR stocks OR economy";
 
-    // 1. Try Configured Environment Backend Proxy Endpoint First
-    if (API_BASE_URL) {
-      try {
-        const backendUrl = `${API_BASE_URL}/news?q=${encodeURIComponent(
-          targetQuery
-        )}&sortBy=${sort}&pageSize=30`;
+    // Resolve Backend Proxy Base URL
+    const activeBackendUrl =
+      API_BASE_URL ||
+      (typeof window !== "undefined" && window.location.hostname === "localhost"
+        ? "http://localhost:4000/investa/v1"
+        : "https://investa-be.onrender.com/investa/v1");
 
-        const response = await axios.get(backendUrl);
+    // 1. Primary: Server-Side Backend Proxy Call (Bypasses NewsAPI Browser Restrictions 100%)
+    try {
+      const proxyEndpoint = `${activeBackendUrl}/news?q=${encodeURIComponent(
+        targetQuery
+      )}&sortBy=${sort}&pageSize=30`;
 
-        if (
-          response.data &&
-          response.data.ok &&
-          Array.isArray(response.data.articles) &&
-          response.data.articles.length > 0
-        ) {
-          setArticles(response.data.articles);
-          setLoading(false);
-          return;
-        }
-      } catch (backendErr) {
-        console.warn("Backend news proxy info, trying direct NewsAPI...");
+      const response = await axios.get(proxyEndpoint);
+
+      if (
+        response.data &&
+        response.data.ok &&
+        Array.isArray(response.data.articles) &&
+        response.data.articles.length > 0
+      ) {
+        setArticles(response.data.articles);
+        setLoading(false);
+        return;
       }
+    } catch (backendErr) {
+      console.warn("Backend news proxy endpoint call info, trying direct call...");
     }
 
-    // 2. Direct NewsAPI call using env key if backend is unreachable
-    if (NEWS_API_KEY) {
+    // 2. Direct NewsAPI call using VITE_NEWS_KEY (Localhost fallback)
+    if (VITE_NEWS_KEY) {
       try {
         const directUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
           targetQuery
-        )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${NEWS_API_KEY}`;
+        )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${VITE_NEWS_KEY}`;
 
         const response = await axios.get(directUrl);
 
@@ -96,18 +101,24 @@ const Home: React.FC = () => {
 
         throw new Error("No live articles returned from News API.");
       } catch (err: any) {
-        console.error("News API Error:", err?.response?.data || err.message);
+        const apiErrMsg = err?.response?.data?.message || err.message;
+        console.error("News API Error:", apiErrMsg);
         setArticles([]);
-        setErrorMsg(
-          err?.response?.data?.message ||
-            "Failed to load live news from API. Please verify environment variables or backend server status."
-        );
-      } finally {
+
+        if (apiErrMsg.includes("browser") || apiErrMsg.includes("Developer plan")) {
+          setErrorMsg(
+            "NewsAPI Developer Plan blocks direct browser requests in production. Content is loaded via Express backend proxy."
+          );
+        } else {
+          setErrorMsg(apiErrMsg || "Failed to load live news from API.");
+        }
+      } font-normal:
+      finally {
         setLoading(false);
       }
     } else {
       setArticles([]);
-      setErrorMsg("News API key or Backend URL missing from environment variables.");
+      setErrorMsg("NEWS_API_KEY environment variable missing from Render backend or Vercel config.");
       setLoading(false);
     }
   }, [activeCategory]);
