@@ -14,10 +14,7 @@ import {
 import NewsHeroBanner from "./NewsHeroBanner";
 import NewsCard from "./NewsCard";
 import NewsSkeleton from "./NewsSkeleton";
-import {
-  type NewsArticle,
-  CATEGORY_TOPICS,
-} from "./newsData";
+import { type NewsArticle, CATEGORY_TOPICS } from "./newsData";
 import { API_BASE_URL, VITE_NEWS_KEY } from "../../config/env.config";
 
 const ITEMS_PER_PAGE = 6;
@@ -32,96 +29,106 @@ const Home: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Fetch news dynamically via Express Backend Proxy (avoids NewsAPI browser developer plan restriction)
-  const fetchNews = useCallback(async (query: string, sort: string) => {
-    setLoading(true);
-    setErrorMsg(null);
+  const fetchNews = useCallback(
+    async (query: string, sort: string) => {
+      setLoading(true);
+      setErrorMsg(null);
 
-    const targetQuery =
-      query.trim() ||
-      CATEGORY_TOPICS.find((c) => c.id === activeCategory)?.query ||
-      "stock market OR financial markets OR stocks OR economy";
+      const targetQuery =
+        query.trim() ||
+        CATEGORY_TOPICS.find((c) => c.id === activeCategory)?.query ||
+        "stock market OR financial markets OR stocks OR economy";
 
-    // Resolve Backend Proxy Base URL
-    const activeBackendUrl =
-      API_BASE_URL ||
-      (typeof window !== "undefined" && window.location.hostname === "localhost"
-        ? "http://localhost:4000/investa/v1"
-        : "https://investa-be.onrender.com/investa/v1");
+      // Resolve Backend Proxy Base URL
+      const activeBackendUrl =
+        API_BASE_URL ||
+        (typeof window !== "undefined" &&
+        window.location.hostname === "localhost"
+          ? "http://localhost:4000/investa/v1"
+          : "https://investa-be.onrender.com/investa/v1");
 
-    // 1. Primary: Server-Side Backend Proxy Call (Bypasses NewsAPI Browser Restrictions 100%)
-    try {
-      const proxyEndpoint = `${activeBackendUrl}/news?q=${encodeURIComponent(
-        targetQuery
-      )}&sortBy=${sort}&pageSize=30`;
-
-      const response = await axios.get(proxyEndpoint);
-
-      if (
-        response.data &&
-        response.data.ok &&
-        Array.isArray(response.data.articles) &&
-        response.data.articles.length > 0
-      ) {
-        setArticles(response.data.articles);
-        setLoading(false);
-        return;
-      }
-    } catch (backendErr) {
-      console.warn("Backend news proxy endpoint call info, trying direct call...");
-    }
-
-    // 2. Direct NewsAPI call using VITE_NEWS_KEY (Localhost fallback)
-    if (VITE_NEWS_KEY) {
+      // 1. Primary: Server-Side Backend Proxy Call (Bypasses NewsAPI Browser Restrictions 100%)
       try {
-        const directUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-          targetQuery
-        )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${VITE_NEWS_KEY}`;
+        const proxyEndpoint = `${activeBackendUrl}/news?q=${encodeURIComponent(
+          targetQuery,
+        )}&sortBy=${sort}&pageSize=30`;
 
-        const response = await axios.get(directUrl);
+        const response = await axios.get(proxyEndpoint);
 
         if (
           response.data &&
-          response.data.status === "ok" &&
-          Array.isArray(response.data.articles)
+          response.data.ok &&
+          Array.isArray(response.data.articles) &&
+          response.data.articles.length > 0
         ) {
-          const validArticles = response.data.articles.filter(
-            (art: NewsArticle) =>
-              art.title &&
-              art.title !== "[Removed]" &&
-              art.description &&
-              art.url
-          );
+          setArticles(response.data.articles);
+          setLoading(false);
+          return;
+        }
+      } catch (backendErr) {
+        console.warn(
+          "Backend news proxy endpoint call info, trying direct call...",
+        );
+      }
 
-          if (validArticles.length > 0) {
-            setArticles(validArticles);
-            setLoading(false);
-            return;
+      // 2. Direct NewsAPI call using VITE_NEWS_KEY (Localhost fallback)
+      if (VITE_NEWS_KEY) {
+        try {
+          const directUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
+            targetQuery,
+          )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${VITE_NEWS_KEY}`;
+
+          const response = await axios.get(directUrl);
+
+          if (
+            response.data &&
+            response.data.status === "ok" &&
+            Array.isArray(response.data.articles)
+          ) {
+            const validArticles = response.data.articles.filter(
+              (art: NewsArticle) =>
+                art.title &&
+                art.title !== "[Removed]" &&
+                art.description &&
+                art.url,
+            );
+
+            if (validArticles.length > 0) {
+              setArticles(validArticles);
+              setLoading(false);
+              return;
+            }
           }
-        }
 
-        throw new Error("No live articles returned from News API.");
-      } catch (err: any) {
-        const apiErrMsg = err?.response?.data?.message || err.message;
-        console.error("News API Error:", apiErrMsg);
+          throw new Error("No live articles returned from News API.");
+        } catch (err: any) {
+          const apiErrMsg = err?.response?.data?.message || err.message;
+          console.error("News API Error:", apiErrMsg);
+          setArticles([]);
+
+          if (
+            apiErrMsg.includes("browser") ||
+            apiErrMsg.includes("Developer plan")
+          ) {
+            setErrorMsg(
+              "NewsAPI Developer Plan blocks direct browser requests in production. Content is loaded via Express backend proxy.",
+            );
+          } else {
+            setErrorMsg(apiErrMsg || "Failed to load live news from API.");
+          }
+        } finally {
+          setLoading(false);
+        }
+      } else {
         setArticles([]);
-
-        if (apiErrMsg.includes("browser") || apiErrMsg.includes("Developer plan")) {
-          setErrorMsg(
-            "NewsAPI Developer Plan blocks direct browser requests in production. Content is loaded via Express backend proxy."
-          );
-        } else {
-          setErrorMsg(apiErrMsg || "Failed to load live news from API.");
-        }
-      } font-normal:
-      finally {
+        setErrorMsg(
+          "NEWS_API_KEY environment variable missing from Render backend or Vercel config.",
+        );
         setLoading(false);
       }
-    } else {
-      setArticles([]);
-      setErrorMsg("NEWS_API_KEY environment variable missing from Render backend or Vercel config.");
-      setLoading(false);
-    }
-  }, [activeCategory]);
+    },
+    [activeCategory],
+  );
 
   useEffect(() => {
     fetchNews(searchQuery, sortBy);
@@ -142,10 +149,13 @@ const Home: React.FC = () => {
   const heroArticle = articles.length > 0 ? articles[0] : null;
   const gridArticles = useMemo(
     () => (articles.length > 1 ? articles.slice(1) : []),
-    [articles]
+    [articles],
   );
 
-  const totalPages = Math.max(1, Math.ceil(gridArticles.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(gridArticles.length / ITEMS_PER_PAGE),
+  );
 
   const paginatedGridArticles = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -197,9 +207,15 @@ const Home: React.FC = () => {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="bg-transparent text-white text-[12px] font-medium outline-none cursor-pointer pr-1"
               >
-                <option value="popularity" className="bg-[#18181c]">Popularity</option>
-                <option value="publishedAt" className="bg-[#18181c]">Latest</option>
-                <option value="relevance" className="bg-[#18181c]">Relevance</option>
+                <option value="popularity" className="bg-[#18181c]">
+                  Popularity
+                </option>
+                <option value="publishedAt" className="bg-[#18181c]">
+                  Latest
+                </option>
+                <option value="relevance" className="bg-[#18181c]">
+                  Relevance
+                </option>
               </select>
             </div>
           </div>
@@ -232,8 +248,12 @@ const Home: React.FC = () => {
       ) : errorMsg ? (
         <div className="w-full py-16 flex flex-col items-center justify-center text-center space-y-4 rounded-2xl border border-dashed border-[#27272a] bg-[#18181c] p-6">
           <AlertCircle className="size-12 text-rose-500" />
-          <h3 className="text-[16px] font-medium text-white">API Connection Error</h3>
-          <p className="text-[12px] text-gray-400 max-w-md font-normal">{errorMsg}</p>
+          <h3 className="text-[16px] font-medium text-white">
+            API Connection Error
+          </h3>
+          <p className="text-[12px] text-gray-400 max-w-md font-normal">
+            {errorMsg}
+          </p>
           <button
             onClick={() => fetchNews(searchQuery, sortBy)}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600 text-white text-[12px] font-medium hover:bg-blue-500 transition-colors shadow-md"
@@ -245,9 +265,12 @@ const Home: React.FC = () => {
       ) : articles.length === 0 ? (
         <div className="w-full py-16 flex flex-col items-center justify-center text-center space-y-4 rounded-2xl border border-dashed border-[#27272a] bg-[#18181c] p-6">
           <Newspaper className="size-12 text-gray-600" />
-          <h3 className="text-[16px] font-medium text-white">No market articles returned</h3>
+          <h3 className="text-[16px] font-medium text-white">
+            No market articles returned
+          </h3>
           <p className="text-[12px] text-gray-400 max-w-sm font-normal">
-            No live news results match "{searchQuery}". Try searching for popular topics like "Nvidia", "Tech", or "Inflation".
+            No live news results match "{searchQuery}". Try searching for
+            popular topics like "Nvidia", "Tech", or "Inflation".
           </p>
           <button
             onClick={handleClearSearch}
@@ -290,19 +313,21 @@ const Home: React.FC = () => {
 
                     {/* Page Numbers */}
                     <div className="flex items-center gap-1.5 px-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                        <button
-                          key={pageNum}
-                          onClick={() => handlePageChange(pageNum)}
-                          className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center ${
-                            currentPage === pageNum
-                              ? "bg-blue-600 text-white border border-blue-400/40"
-                              : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      ))}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (pageNum) => (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center ${
+                              currentPage === pageNum
+                                ? "bg-blue-600 text-white border border-blue-400/40"
+                                : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        ),
+                      )}
                     </div>
 
                     <button
@@ -347,19 +372,21 @@ const Home: React.FC = () => {
 
                     {/* Page Numbers */}
                     <div className="flex items-center gap-1.5 px-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                        <button
-                          key={pageNum}
-                          onClick={() => handlePageChange(pageNum)}
-                          className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center ${
-                            currentPage === pageNum
-                              ? "bg-blue-600 text-white border border-blue-400/40"
-                              : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      ))}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (pageNum) => (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center ${
+                              currentPage === pageNum
+                                ? "bg-blue-600 text-white border border-blue-400/40"
+                                : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        ),
+                      )}
                     </div>
 
                     <button
