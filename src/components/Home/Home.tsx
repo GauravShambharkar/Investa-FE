@@ -31,7 +31,7 @@ const Home: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("popularity");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Fetch news dynamically via API endpoint (smart local/production backend with direct NewsAPI fallback)
+  // Fetch news dynamically via API endpoint using env variables
   const fetchNews = useCallback(async (query: string, sort: string) => {
     setLoading(true);
     setErrorMsg(null);
@@ -41,38 +41,14 @@ const Home: React.FC = () => {
       CATEGORY_TOPICS.find((c) => c.id === activeCategory)?.query ||
       "stock market OR financial markets OR stocks OR economy";
 
-    const fallbackProdUrl = "https://investa-be.onrender.com/investa/v1";
-
-    // 1. Try Configured Environment Backend Proxy Endpoint
-    try {
-      const backendUrl = `${API_BASE_URL}/news?q=${encodeURIComponent(
-        targetQuery
-      )}&sortBy=${sort}&pageSize=30`;
-
-      const response = await axios.get(backendUrl);
-
-      if (
-        response.data &&
-        response.data.ok &&
-        Array.isArray(response.data.articles) &&
-        response.data.articles.length > 0
-      ) {
-        setArticles(response.data.articles);
-        setLoading(false);
-        return;
-      }
-    } catch (primaryErr) {
-      console.warn("Primary backend endpoint info, trying fallback backend...");
-    }
-
-    // 2. Try Secondary Production Backend if Primary Localhost Server is offline
-    if (API_BASE_URL !== fallbackProdUrl) {
+    // 1. Try Configured Environment Backend Proxy Endpoint First
+    if (API_BASE_URL) {
       try {
-        const prodBackendUrl = `${fallbackProdUrl}/news?q=${encodeURIComponent(
+        const backendUrl = `${API_BASE_URL}/news?q=${encodeURIComponent(
           targetQuery
         )}&sortBy=${sort}&pageSize=30`;
 
-        const response = await axios.get(prodBackendUrl);
+        const response = await axios.get(backendUrl);
 
         if (
           response.data &&
@@ -84,48 +60,54 @@ const Home: React.FC = () => {
           setLoading(false);
           return;
         }
-      } catch (prodErr) {
-        console.warn("Production backend proxy info, trying direct NewsAPI...");
+      } catch (backendErr) {
+        console.warn("Backend news proxy info, trying direct NewsAPI...");
       }
     }
 
-    // 3. Direct NewsAPI call if both backends are unreachable
-    try {
-      const directUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-        targetQuery
-      )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${NEWS_API_KEY}`;
+    // 2. Direct NewsAPI call using env key if backend is unreachable
+    if (NEWS_API_KEY) {
+      try {
+        const directUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
+          targetQuery
+        )}&sortBy=${sort}&language=en&pageSize=30&apiKey=${NEWS_API_KEY}`;
 
-      const response = await axios.get(directUrl);
+        const response = await axios.get(directUrl);
 
-      if (
-        response.data &&
-        response.data.status === "ok" &&
-        Array.isArray(response.data.articles)
-      ) {
-        const validArticles = response.data.articles.filter(
-          (art: NewsArticle) =>
-            art.title &&
-            art.title !== "[Removed]" &&
-            art.description &&
-            art.url
-        );
+        if (
+          response.data &&
+          response.data.status === "ok" &&
+          Array.isArray(response.data.articles)
+        ) {
+          const validArticles = response.data.articles.filter(
+            (art: NewsArticle) =>
+              art.title &&
+              art.title !== "[Removed]" &&
+              art.description &&
+              art.url
+          );
 
-        if (validArticles.length > 0) {
-          setArticles(validArticles);
-          setLoading(false);
-          return;
+          if (validArticles.length > 0) {
+            setArticles(validArticles);
+            setLoading(false);
+            return;
+          }
         }
-      }
 
-      throw new Error("No live articles returned from News API.");
-    } catch (err: any) {
-      console.error("News API Error:", err?.response?.data || err.message);
+        throw new Error("No live articles returned from News API.");
+      } catch (err: any) {
+        console.error("News API Error:", err?.response?.data || err.message);
+        setArticles([]);
+        setErrorMsg(
+          err?.response?.data?.message ||
+            "Failed to load live news from API. Please verify environment variables or backend server status."
+        );
+      } finally {
+        setLoading(false);
+      }
+    } else {
       setArticles([]);
-      setErrorMsg(
-        err?.response?.data?.message ||
-          "Failed to load live news from API. Please verify backend server or API key status."
-      );
-    } finally {
+      setErrorMsg("News API key or Backend URL missing from environment variables.");
       setLoading(false);
     }
   }, [activeCategory]);

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Read raw Vite environment variables cleanly from environment
+// Read raw Vite environment variables strictly from environment files (.env / .env.local)
 const rawEnv = {
   MODE: import.meta.env.MODE || "development",
   DEV: import.meta.env.DEV ?? true,
@@ -8,29 +8,22 @@ const rawEnv = {
   VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "",
   VITE_NEWS_API:
     import.meta.env.VITE_NEWS_API || import.meta.env.VITE_NEWS_KEY || "",
-  VITE_LOCAL_API_URL:
-    import.meta.env.VITE_LOCAL_API_URL || "http://localhost:4000/investa/v1",
-  VITE_PROD_API_URL:
-    import.meta.env.VITE_PROD_API_URL ||
-    "https://investa-be.onrender.com/investa/v1",
-  VITE_LOCAL_WEB_URL:
-    import.meta.env.VITE_LOCAL_WEB_URL || "http://localhost:5173",
-  VITE_PROD_WEB_URL:
-    import.meta.env.VITE_PROD_WEB_URL || "https://investaai.vercel.app",
+  VITE_BACKEND_URL: import.meta.env.VITE_BACKEND_URL || "",
+  VITE_LOCAL_API_URL: import.meta.env.VITE_LOCAL_API_URL || "",
+  VITE_PROD_API_URL: import.meta.env.VITE_PROD_API_URL || "",
+  VITE_WEB_APP_URL: import.meta.env.VITE_WEB_APP_URL || "",
 };
 
 const envSchema = z.object({
   MODE: z.string().default("development"),
   DEV: z.boolean().default(true),
   PROD: z.boolean().default(false),
-  VITE_CLERK_PUBLISHABLE_KEY: z.string().default(""),
-  VITE_NEWS_API: z.string().default(""),
-  VITE_LOCAL_API_URL: z.string().default("http://localhost:4000/investa/v1"),
-  VITE_PROD_API_URL: z
-    .string()
-    .default("https://investa-be.onrender.com/investa/v1"),
-  VITE_LOCAL_WEB_URL: z.string().default("http://localhost:5173"),
-  VITE_PROD_WEB_URL: z.string().default("https://investaai.vercel.app"),
+  VITE_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+  VITE_NEWS_API: z.string().optional(),
+  VITE_BACKEND_URL: z.string().optional(),
+  VITE_LOCAL_API_URL: z.string().optional(),
+  VITE_PROD_API_URL: z.string().optional(),
+  VITE_WEB_APP_URL: z.string().optional(),
 });
 
 export const env = envSchema.parse(rawEnv);
@@ -44,17 +37,16 @@ const isLocalhost =
 export const IS_DEVELOPMENT = env.DEV || isLocalhost;
 export const IS_PRODUCTION = env.PROD && !isLocalhost;
 
-// Conditional logic for API Base URL & Web App URL
-export const API_BASE_URL = IS_DEVELOPMENT
-  ? env.VITE_LOCAL_API_URL
-  : env.VITE_PROD_API_URL;
+// Conditional logic for API Base URL strictly based on env variables
+export const API_BASE_URL =
+  env.VITE_BACKEND_URL ||
+  (IS_DEVELOPMENT
+    ? env.VITE_LOCAL_API_URL || env.VITE_PROD_API_URL || ""
+    : env.VITE_PROD_API_URL || env.VITE_LOCAL_API_URL || "");
 
-export const WEB_APP_URL = IS_DEVELOPMENT
-  ? env.VITE_LOCAL_WEB_URL
-  : env.VITE_PROD_WEB_URL;
-
-export const CLERK_PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY;
-export const NEWS_API_KEY = env.VITE_NEWS_API;
+export const WEB_APP_URL = env.VITE_WEB_APP_URL || "";
+export const CLERK_PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY || "";
+export const NEWS_API_KEY = env.VITE_NEWS_API || "";
 
 // Helper Endpoints
 export const STOCK_ANALYSIS_ENDPOINT = `${API_BASE_URL}/analyse`;
