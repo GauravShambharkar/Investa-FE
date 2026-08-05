@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, Sparkles, Zap, ShieldCheck } from "lucide-react";
+import { Check, Sparkles, Zap } from "lucide-react";
 
 const SubscriptionPlans: React.FC = () => {
   const plans = [
@@ -21,7 +21,8 @@ const SubscriptionPlans: React.FC = () => {
       name: "Investa Pro",
       price: "$19",
       period: "per month",
-      description: "Advanced AI financial evaluations, real-time metrics, & unlimited scans.",
+      description:
+        "Advanced AI financial evaluations, real-time metrics, & unlimited scans.",
       features: [
         "Unlimited Gemini 2.5 AI Scans",
         "Real-time TwelveData Market LTP",
@@ -36,7 +37,8 @@ const SubscriptionPlans: React.FC = () => {
       name: "Enterprise Capital",
       price: "$49",
       period: "per month",
-      description: "For fund managers, equity analysts, and high-frequency traders.",
+      description:
+        "For fund managers, equity analysts, and high-frequency traders.",
       features: [
         "Everything in Pro Plan",
         "Custom API Integrations",
@@ -59,7 +61,8 @@ const SubscriptionPlans: React.FC = () => {
           Supercharge Your Investment Decisions
         </h1>
         <p className="text-[14px] text-gray-400">
-          Choose the right plan to access real-time market data, advanced valuation metrics, and AI intelligence.
+          Choose the right plan to access real-time market data, advanced
+          valuation metrics, and AI intelligence.
         </p>
       </div>
 
@@ -81,18 +84,27 @@ const SubscriptionPlans: React.FC = () => {
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-[18px] font-medium text-white">{plan.name}</h3>
-                <p className="text-[12px] text-gray-400 mt-1 font-normal">{plan.description}</p>
+                <h3 className="text-[18px] font-medium text-white">
+                  {plan.name}
+                </h3>
+                <p className="text-[12px] text-gray-400 mt-1 font-normal">
+                  {plan.description}
+                </p>
               </div>
 
               <div className="flex items-baseline gap-1 pt-2">
-                <span className="text-[32px] font-medium text-white">{plan.price}</span>
+                <span className="text-[32px] font-medium text-white">
+                  {plan.price}
+                </span>
                 <span className="text-[12px] text-gray-400">{plan.period}</span>
               </div>
 
               <div className="space-y-2.5 pt-4 border-t border-[#27272a]">
                 {plan.features.map((feat) => (
-                  <div key={feat} className="flex items-center gap-2 text-[12px] text-gray-300">
+                  <div
+                    key={feat}
+                    className="flex items-center gap-2 text-[12px] text-gray-300"
+                  >
                     <Check className="size-4 text-blue-400 shrink-0" />
                     <span>{feat}</span>
                   </div>
