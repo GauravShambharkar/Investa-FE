@@ -40,7 +40,7 @@ const Navbar = () => {
       <div className="w-[70%] h-25 mx-auto flex flex-col justify-center max-[850px]:w-[90%]">
         <div className="flex items-center justify-between border border-[#27272a] px-5 py-3 rounded-full bg-[#18181c]/60 backdrop-blur-md">
           <NavLink to="/news" className="flex items-center">
-            <img src="/investa.svg" alt="Investa Logo" className="size-10" />
+            <img src="/investa.svg" alt="Investa Logo" className="size-6" />
           </NavLink>
 
           {/* Right side navigation elements */}
