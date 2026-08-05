@@ -1,10 +1,9 @@
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 import "./index.css";
 import App from "./App.tsx";
 import { ClerkProvider } from "@clerk/clerk-react";
-import { Provider } from "react-redux";
-import { store } from "./components/Store/Store.tsx";
 import { CLERK_PUBLISHABLE_KEY } from "./config/env.config.ts";
 
 if (!CLERK_PUBLISHABLE_KEY) {
@@ -12,11 +11,11 @@ if (!CLERK_PUBLISHABLE_KEY) {
 }
 
 createRoot(document.getElementById("root")!).render(
-  <Provider store={store}>
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
-      <BrowserRouter>
+  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+    <BrowserRouter>
+      <NuqsAdapter>
         <App />
-      </BrowserRouter>
-    </ClerkProvider>
-  </Provider>
+      </NuqsAdapter>
+    </BrowserRouter>
+  </ClerkProvider>
 );
