@@ -33,7 +33,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
         <div className="flex items-center justify-between text-[12px] text-gray-400">
           <span className="flex items-center gap-1 font-normal">
             <Clock className="size-3.5 text-blue-400" />
-            {formatDate(article.publishedAt)}
+            {formatDate(article.latest)}
           </span>
           {article.author && (
             <span className="truncate max-w-[120px] text-gray-400 font-normal">
@@ -56,7 +56,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
 
         {/* Description */}
         <p className="text-[13px] text-gray-400 line-clamp-3 leading-relaxed font-normal">
-          {article.description || "Stay updated with the latest market developments and equity movements."}
+          {article.description ||
+            "Stay updated with the latest market developments and equity movements."}
         </p>
       </div>
 
