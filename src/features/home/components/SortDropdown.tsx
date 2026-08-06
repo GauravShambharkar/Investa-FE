@@ -9,7 +9,7 @@ interface SortOption {
 
 const SORT_OPTIONS: SortOption[] = [
   { id: "popularity", label: "Popularity", shortDesc: "Highest reader engagement" },
-  { id: "publishedAt", label: "Latest", shortDesc: "Most recent stories" },
+  { id: "latest", label: "Latest", shortDesc: "Most recent stories" },
   { id: "relevance", label: "Relevance", shortDesc: "Best keyword match" },
 ];
 

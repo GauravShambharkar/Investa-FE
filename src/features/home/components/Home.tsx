@@ -26,9 +26,16 @@ const ITEMS_PER_PAGE = 6;
 const Home: React.FC = () => {
   // nuqs URL Search Parameters State Synchronization
   const [queryParam, setQueryParam] = useQueryState("q", { defaultValue: "" });
-  const [categoryParam, setCategoryParam] = useQueryState("cat", { defaultValue: "all" });
-  const [sortParam, setSortParam] = useQueryState("sort", { defaultValue: "popularity" });
-  const [pageParam, setPageParam] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [categoryParam, setCategoryParam] = useQueryState("cat", {
+    defaultValue: "all",
+  });
+  const [sortParam, setSortParam] = useQueryState("sort", {
+    defaultValue: "latest",
+  });
+  const [pageParam, setPageParam] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1),
+  );
 
   // Relative Dropdown open states
   const [isTopicOpen, setIsTopicOpen] = useState<boolean>(false);
@@ -59,11 +66,11 @@ const Home: React.FC = () => {
   // Initial 3 category capsules
   const initialCategoryCapsules = useMemo(
     () => CATEGORY_TOPICS.slice(0, 3),
-    []
+    [],
   );
 
   const currentSortLabel = useMemo(() => {
-    if (sortParam === "publishedAt") return "Latest";
+    if (sortParam === "latest") return "latest";
     if (sortParam === "relevance") return "Relevance";
     return "Popularity";
   }, [sortParam]);
@@ -71,10 +78,13 @@ const Home: React.FC = () => {
   const heroArticle = articles.length > 0 ? articles[0] : null;
   const gridArticles = useMemo(
     () => (articles.length > 1 ? articles.slice(1) : []),
-    [articles]
+    [articles],
   );
 
-  const totalPages = Math.max(1, Math.ceil(gridArticles.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(gridArticles.length / ITEMS_PER_PAGE),
+  );
   const currentPage = Math.min(Math.max(1, pageParam), totalPages);
 
   const paginatedGridArticles = useMemo(() => {
@@ -97,7 +107,6 @@ const Home: React.FC = () => {
       {/* Single Flex Line Filter Bar */}
       <section className="mb-8 relative z-30">
         <div className="flex items-center justify-between gap-3 overflow-visible bg-[#18181c] p-3.5 rounded-2xl border border-[#27272a] flex-nowrap">
-          
           {/* Left Side: Initial Category Capsules + Relative Topic Dropdown */}
           <div className="flex items-center gap-2 shrink-0">
             {initialCategoryCapsules.map((cat) => {
@@ -128,7 +137,9 @@ const Home: React.FC = () => {
               >
                 <Layers className="size-3.5 text-blue-400" />
                 <span>+ All Topics</span>
-                <ChevronDown className={`size-3 transition-transform duration-200 ${isTopicOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`size-3 transition-transform duration-200 ${isTopicOpen ? "rotate-180" : ""}`}
+                />
               </button>
 
               <TopicDropdown
@@ -150,8 +161,15 @@ const Home: React.FC = () => {
               className="whitespace-nowrap px-4 py-2 bg-[#121215] border border-[#27272a] hover:border-[#3f3f46] hover:bg-[#222228] rounded-full text-[12px] text-gray-300 font-medium transition-all cursor-pointer flex items-center gap-1.5"
             >
               <SlidersHorizontal className="size-3.5 text-blue-400" />
-              <span>Sort: <strong className="text-white font-medium">{currentSortLabel}</strong></span>
-              <ChevronDown className={`size-3 transition-transform duration-200 ${isSortOpen ? "rotate-180" : ""}`} />
+              <span>
+                Sort:{" "}
+                <strong className="text-white font-medium">
+                  {currentSortLabel}
+                </strong>
+              </span>
+              <ChevronDown
+                className={`size-3 transition-transform duration-200 ${isSortOpen ? "rotate-180" : ""}`}
+              />
             </button>
 
             <SortDropdown
@@ -184,7 +202,6 @@ const Home: React.FC = () => {
               </button>
             )}
           </div>
-
         </div>
       </section>
 
@@ -194,8 +211,12 @@ const Home: React.FC = () => {
       ) : errorMsg ? (
         <div className="w-full py-16 flex flex-col items-center justify-center text-center space-y-4 rounded-2xl border border-dashed border-[#27272a] bg-[#18181c] p-6">
           <AlertCircle className="size-12 text-rose-500" />
-          <h3 className="text-[16px] font-medium text-white">API Connection Error</h3>
-          <p className="text-[12px] text-gray-400 max-w-md font-normal">{errorMsg}</p>
+          <h3 className="text-[16px] font-medium text-white">
+            API Connection Error
+          </h3>
+          <p className="text-[12px] text-gray-400 max-w-md font-normal">
+            {errorMsg}
+          </p>
           <button
             onClick={() => fetchNews(queryParam, sortParam, categoryParam)}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600 text-white text-[12px] font-medium hover:bg-blue-500 transition-colors shadow-md cursor-pointer"
@@ -207,9 +228,12 @@ const Home: React.FC = () => {
       ) : articles.length === 0 ? (
         <div className="w-full py-16 flex flex-col items-center justify-center text-center space-y-4 rounded-2xl border border-dashed border-[#27272a] bg-[#18181c] p-6">
           <Newspaper className="size-12 text-gray-600" />
-          <h3 className="text-[16px] font-medium text-white">No market articles returned</h3>
+          <h3 className="text-[16px] font-medium text-white">
+            No market articles returned
+          </h3>
           <p className="text-[12px] text-gray-400 max-w-sm font-normal">
-            No live news results match "{queryParam}". Try searching for popular topics like "Nvidia", "Tech", or "Inflation".
+            No live news results match "{queryParam}". Try searching for popular
+            topics like "Nvidia", "Tech", or "Inflation".
           </p>
           <button
             onClick={handleClearSearch}
@@ -252,19 +276,21 @@ const Home: React.FC = () => {
 
                     {/* Page Numbers */}
                     <div className="flex items-center gap-1.5 px-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                        <button
-                          key={pageNum}
-                          onClick={() => handlePageChange(pageNum)}
-                          className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center cursor-pointer ${
-                            currentPage === pageNum
-                              ? "bg-blue-600 text-white border border-blue-400/40"
-                              : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      ))}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (pageNum) => (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center cursor-pointer ${
+                              currentPage === pageNum
+                                ? "bg-blue-600 text-white border border-blue-400/40"
+                                : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        ),
+                      )}
                     </div>
 
                     <button
@@ -309,19 +335,21 @@ const Home: React.FC = () => {
 
                     {/* Page Numbers */}
                     <div className="flex items-center gap-1.5 px-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                        <button
-                          key={pageNum}
-                          onClick={() => handlePageChange(pageNum)}
-                          className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center cursor-pointer ${
-                            currentPage === pageNum
-                              ? "bg-blue-600 text-white border border-blue-400/40"
-                              : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      ))}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (pageNum) => (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`size-8 rounded-full text-[12px] font-medium transition-all flex items-center justify-center cursor-pointer ${
+                              currentPage === pageNum
+                                ? "bg-blue-600 text-white border border-blue-400/40"
+                                : "bg-[#18181c] text-gray-400 border border-[#27272a] hover:text-white hover:bg-[#222228]"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        ),
+                      )}
                     </div>
 
                     <button
