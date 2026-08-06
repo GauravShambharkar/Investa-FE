@@ -55,7 +55,7 @@ const NewsHeroBanner: React.FC<NewsHeroBannerProps> = ({ article }) => {
                 </span>
                 <span className="flex items-center gap-1 text-gray-400">
                   <Clock className="size-3.5" />
-                  {formatDate(article.publishedAt)}
+                  {formatDate(article.latest)}
                 </span>
                 {article.author && (
                   <span className="hidden sm:flex items-center gap-1 truncate max-w-[140px] text-gray-400">
